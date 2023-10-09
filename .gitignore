@@ -3,8 +3,6 @@
 *.so
 *.gguf
 *.bin
-*.exe
-*.dll
 *.log
 *.gcov
 *.gcno

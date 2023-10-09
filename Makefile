@@ -107,8 +107,8 @@ endif
 
 # keep standard at C11 and C++11
 MK_CPPFLAGS = -I. -Icommon
-MK_CFLAGS   = -std=c11   -fPIC
-MK_CXXFLAGS = -std=c++11 -fPIC
+MK_CFLAGS   = -std=c11   -fPIC -I./include/vulkan
+MK_CXXFLAGS = -std=c++11 -fPIC -I./examples -I./include/vulkan
 
 # -Ofast tends to produce faster code, but may not be available for some compilers.
 ifdef LLAMA_FAST
@@ -430,7 +430,7 @@ endif # LLAMA_CLBLAST
 ifdef LLAMA_VULKAN
 	CFLAGS  += -DGGML_USE_VULKAN
 	CXXFLAGS  += -DGGML_USE_VULKAN
-	LDFLAGS += -lvulkan -lopenblas -lglslang -lSPIRV -lSPIRV-Tools-opt -lSPIRV-Tools -lshaderc_combined
+# LDFLAGS += -lvulkan -lopenblas -lglslang -lSPIRV -lSPIRV-Tools-opt -lSPIRV-Tools -lshaderc_combined
 	OBJS    += ggml-vulkan.o
 ggml-vulkan.o: ggml-vulkan.cpp ggml-vulkan.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -547,7 +547,7 @@ clean:
 #
 
 main: examples/main/main.cpp                                  build-info.h ggml.o llama.o common.o console.o grammar-parser.o $(OBJS)
-	$(CXX) $(CXXFLAGS) $(filter-out %.h,$^) -o $@ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(filter-out %.h,$^) -o $@ lib/shaderc_combined.lib lib/shaderc_shared.lib lib/vulkan-1.lib lib/shaderc.lib $(LDFLAGS)
 	@echo
 	@echo '====  Run ./main -h for help.  ===='
 	@echo
